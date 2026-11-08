@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>敏感性看板 · 真空改善 vs 节能量 | 冷端节能</title>
+<meta name="description" content="真空改善 0–3 kPa 全区间，两套文献系数并列，实时重绘年节标煤与年节约费用曲线。">
+<meta name="theme-color" content="#0b6b5f">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <div class="brandline">
+      <div class="logo">冷</div>
+      <div>
+        <h1>敏感性看板</h1>
+        <div class="sub">真空改善全区间 · 两套文献系数并列对比</div>
+      </div>
+    </div>
+    <nav class="site">
+      <a href="index.html">首页</a>
+      <a href="calculator.html">节能量测算</a>
+      <a href="dashboard.html" class="active">敏感性看板</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="card">
+    <h2>机组参数</h2>
+    <p class="hint">改动任一参数，下方两张图立即按同一套公式重绘。曲线不是预置数据，全部现场计算得出。</p>
+    <div class="grid g3">
+      <div class="field">
+        <label for="powerMW">额定容量 P (MW)</label>
+        <input id="powerMW" type="number" min="0" step="10" value="300" inputmode="decimal">
+      </div>
+      <div class="field">
+        <label for="hours">年利用小时 (h/年)</label>
+        <input id="hours" type="number" min="0" step="100" value="5500" inputmode="decimal">
+      </div>
+      <div class="field">
+        <label for="price">标煤单价 (元/t)</label>
+        <input id="price" type="number" min="0" step="10" value="800" inputmode="decimal">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>年节标煤量 · 系数敏感性</h2>
+    <p class="hint">横轴为真空改善量 0–3.0 kPa（步长 0.1）。实线用通用估算系数，虚线用 600 MW 机组文献值——两条线的间距就是系数不确定度。</p>
+    <div id="chart-coal" class="chart"></div>
+  </div>
+
+  <div class="card">
+    <h2>年节约费用 · 按当前标煤单价</h2>
+    <p class="hint">同一批数据换算成金额（K = 2.6 那一套口径）。标煤单价改了，整条柱子跟着变。</p>
+    <div id="chart-money" class="chart"></div>
+  </div>
+
+  <div class="card">
+    <h2>怎么读这两张图</h2>
+    <p class="note">
+      ① 曲线近似线性，但真实机组的煤耗-真空关系是上凸的：真空越低，同样 1 kPa 的收益越大，所以在低真空区间本估算偏保守。<br>
+      ② 两套系数差约 37%，这个差距意味着<strong>不能只报一个数</strong>——正式方案里应给出区间，并说明取值依据来自本机热力特性曲线。<br>
+      ③ 金额只含燃料收益，不含循环水泵电耗变化与清洗成本，属于净收益上界（未扣成本），测算器里另给保守下界口径。
+    </p>
+  </div>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <span>© 冷端节能科技（广州） · 演示站</span>
+    <span>曲线由 assets/calc.js 公式实时派生</span>
+  </div>
+</footer>
+
+<script src="assets/echarts.min.js"></script>
+<script src="assets/calc.js"></script>
+<script src="assets/dashboard.js"></script>
+</body>
+</html>

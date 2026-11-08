@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>节能量测算器 · 凝汽器真空/端差改善 | 冷端节能</title>
+<meta name="description" content="输入机组容量、利用小时与真空或端差改善量，在线测算供电煤耗降幅、年节标煤、年节约费用与减排量。">
+<meta name="theme-color" content="#0b6b5f">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <div class="brandline">
+      <div class="logo">冷</div>
+      <div>
+        <h1>节能量测算器</h1>
+        <div class="sub">凝汽器真空 / 端差改善 → 供电煤耗 · 节标煤 · 费用 · 减排</div>
+      </div>
+    </div>
+    <nav class="site">
+      <a href="index.html">首页</a>
+      <a href="calculator.html" class="active">节能量测算</a>
+      <a href="dashboard.html">敏感性看板</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="card">
+    <h2>1. 机组参数</h2>
+    <p class="hint">年发电量 = 额定容量 × 年利用小时（利用小时已含负荷率，勿重复折算）。</p>
+    <div class="grid g3">
+      <div class="field">
+        <label for="powerMW">额定容量 P (MW)</label>
+        <input id="powerMW" type="number" min="0" step="10" value="300" inputmode="decimal">
+      </div>
+      <div class="field">
+        <label for="hours">年利用小时 h (h/年)</label>
+        <input id="hours" type="number" min="0" step="100" value="5500" inputmode="decimal">
+      </div>
+      <div class="field">
+        <label for="price">标煤单价 (元/t) <span class="todo">按实际采购价填写</span></label>
+        <input id="price" type="number" min="0" step="10" value="800" inputmode="decimal">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>2. 改善量</h2>
+    <div class="modebar" role="group" aria-label="测算模式">
+      <button type="button" data-mode="vacuum" aria-pressed="true">按真空改善 Δp</button>
+      <button type="button" data-mode="deltat" aria-pressed="false">按端差降低 ΔT</button>
+    </div>
+
+    <div id="vacuum-fields">
+      <div class="grid g2">
+        <div class="field">
+          <label for="deltaP">真空改善量 Δp (kPa)</label>
+          <input id="deltaP" type="number" min="0" step="0.1" value="1.0" inputmode="decimal">
+        </div>
+        <div class="field">
+          <label for="k">煤耗敏感系数 K (g/(kW·h·kPa))</label>
+          <input id="k" type="number" min="0" step="0.1" value="2.6" inputmode="decimal">
+        </div>
+      </div>
+      <p class="note">K 默认 <strong>2.6</strong>（贵州省能源局估算，80% 以上负荷、额定真空附近）；600 MW 机组文献实测值 <strong>1.9</strong>。机组越大、真空越低，该系数越小，建议用本机热力特性曲线核定。</p>
+    </div>
+
+    <div id="deltat-fields" style="display:none">
+      <div class="grid g2">
+        <div class="field">
+          <label for="deltaT">端差降低量 ΔT (℃)</label>
+          <input id="deltaT" type="number" min="0" step="0.1" value="1.0" inputmode="decimal">
+        </div>
+        <div class="field">
+          <label for="kdt">端差敏感系数 K (g/(kW·h·℃))</label>
+          <input id="kdt" type="number" min="0" step="0.01" value="0.48" inputmode="decimal">
+        </div>
+      </div>
+      <p class="note">端差每增加 1 ℃ ≈ 排汽温度升 1 ℃ ≈ 真空下降 0.3 kPa（额定真空附近），本模式按 0.48 g/(kW·h·℃) 直接折算。</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>3. 测算结果</h2>
+    <div class="result">
+      <div class="kpi">
+        <div class="lab">供电煤耗降低</div>
+        <div class="val"><span id="out-db">—</span><span class="unit">g/kWh</span></div>
+      </div>
+      <div class="kpi">
+        <div class="lab">年节标煤</div>
+        <div class="val"><span id="out-coal">—</span><span class="unit">t</span></div>
+      </div>
+      <div class="kpi alt">
+        <div class="lab">年节约费用</div>
+        <div class="val"><span id="out-money">—</span><span class="unit">万元</span></div>
+      </div>
+      <div class="kpi">
+        <div class="lab">度电成本下降</div>
+        <div class="val"><span id="out-unit">—</span><span class="unit">元/kWh</span></div>
+      </div>
+      <div class="kpi">
+        <div class="lab">年减排 CO₂</div>
+        <div class="val"><span id="out-co2">—</span><span class="unit">t</span></div>
+      </div>
+      <div class="kpi" id="out-eq-wrap" style="display:none">
+        <div class="lab">等效真空改善</div>
+        <div class="val"><span id="out-eq">—</span><span class="unit">kPa</span></div>
+      </div>
+    </div>
+    <p class="note">年发电量：<span id="out-energy">—</span> MWh</p>
+
+    <div class="field" style="margin-top:16px">
+      <label for="co2f">CO₂ 排放因子 (tCO₂ / t标煤) <span class="todo">按当地碳核算指南核对</span></label>
+      <input id="co2f" type="number" min="0" step="0.01" value="2.66" inputmode="decimal">
+    </div>
+
+    <p class="note" style="margin-top:8px">
+      分享/存档链接（含当前全部参数，可直接发客户或粘进方案）：
+    </p>
+    <div style="display:flex;gap:8px;align-items:center;margin-top:6px">
+      <input id="share" type="text" readonly style="flex:1;padding:9px 11px;border:1px solid var(--line);border-radius:8px;font:inherit;font-size:13px;color:var(--ink-2);background:#fafbfc">
+      <button id="copy" type="button" style="padding:9px 16px;border-radius:8px;border:1px solid var(--brand);background:var(--brand);color:#fff;font:inherit;font-size:14px;cursor:pointer;white-space:nowrap">复制</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>4. 计算过程与系数出处</h2>
+    <p class="hint">下列代入行随输入实时更新，可直接复制进技术方案的计算说明章节。</p>
+    <table class="fx">
+      <thead><tr><th style="width:120px">项目</th><th>代入过程</th></tr></thead>
+      <tbody>
+        <tr><td>煤耗降幅</td><td id="fx-db">—</td></tr>
+        <tr><td>年节标煤</td><td id="fx-coal">—</td></tr>
+        <tr><td>年节约费用</td><td id="fx-money">—</td></tr>
+        <tr><td>年减排 CO₂</td><td id="fx-co2">—</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card" id="sources">
+    <h2>系数依据与限定条件</h2>
+    <table class="fx">
+      <thead><tr><th style="width:150px">系数</th><th>取值</th><th>出处与适用条件</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>真空→煤耗 K</td><td>2.6 g/(kW·h·kPa)</td>
+          <td>贵州省能源局《影响供电煤耗的因素》第 9 条：凝汽器真空下降 1 kPa，供电煤耗上升 2.6 g/kWh。<strong>原文限定</strong>：80% 以上负荷、额定真空附近的估算数据；真空越低，每 1 kPa 的影响越大。<br>
+          <a href="https://nyj.guizhou.gov.cn/zxfw/nyzs/201905/t20190527_28793451.html" target="_blank" rel="noopener noreferrer">原文链接</a></td>
+        </tr>
+        <tr>
+          <td>真空→煤耗 K（600 MW 实测）</td><td>1.9 g/(kW·h·kPa)</td>
+          <td>《600 MW 机组真空系统加装蒸汽喷射器改造》（内蒙古电力技术）：压力每下降 1 kPa，煤耗降低 1.9 g/kWh（引自邓晓伟等《真空变化对机组煤耗的影响》）。<br>
+          <a href="https://html.rhhz.net/nmgdljs/20150217.htm" target="_blank" rel="noopener noreferrer">原文链接</a></td>
+        </tr>
+        <tr>
+          <td>端差→煤耗 K</td><td>0.48 g/(kW·h·℃)</td>
+          <td>同贵州省能源局文第 17 条：凝汽器端差每增加 1 ℃，供电煤耗上升 0.48 g/kWh（额定真空附近）。</td>
+        </tr>
+        <tr>
+          <td>端差↔真空换算</td><td>1 ℃ ≈ 0.3 kPa</td>
+          <td>同文第 17 条：端差增加 1 ℃ 相当于排汽温度升高 1 ℃，额定真空附近约使真空下降 0.3 kPa。</td>
+        </tr>
+        <tr>
+          <td>CO₂ 排放因子</td><td>2.66 tCO₂/t标煤</td>
+          <td>行业常用值，<span class="todo">⚠️ 待按当地碳核算指南核对</span>；页面可改。</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="note">
+      使用边界：结果为工程估算，不含循环水泵电耗、清洗药剂与人工成本，也不含冷却塔侧节水收益；
+      正式方案须以机组热力特性曲线、真空严密性试验与修前修后性能试验数据修正。系数在不同机组间差异显著，<strong>不要把默认值当作本项目实测值</strong>。
+    </p>
+  </div>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <span>© 冷端节能科技（广州） · 演示站</span>
+    <span>测算结果仅供工程估算参考</span>
+  </div>
+</footer>
+
+<script src="assets/calc.js"></script>
+<script src="assets/calculator.js"></script>
+</body>
+</html>

@@ -1,0 +1,90 @@
+/* 冷端节能 · 演示站 共用样式
+   纯本地，无外部字体/CDN 依赖 */
+:root{
+  --ink:#0f1720; --ink-2:#3d4a57; --line:#dfe5ec; --bg:#f6f8fa;
+  --brand:#0b6b5f; --brand-2:#128a7a; --warn:#b3261e; --warn-bg:#fff4f3;
+  --card:#ffffff; --radius:10px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font:16px/1.7 -apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  color:var(--ink); background:var(--bg);
+  -webkit-text-size-adjust:100%;
+}
+a{color:var(--brand);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:960px;margin:0 auto;padding:0 18px}
+header.site{
+  background:linear-gradient(135deg,#0b6b5f 0%,#128a7a 55%,#0f7d8c 100%);
+  color:#fff;padding:26px 0 22px;
+}
+header.site .wrap{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between}
+.brandline{display:flex;align-items:center;gap:12px}
+.logo{
+  width:38px;height:38px;border-radius:9px;flex:0 0 auto;
+  background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.45);
+  display:grid;place-items:center;font-weight:700;font-size:17px;letter-spacing:.5px
+}
+header.site h1{font-size:19px;margin:0;font-weight:700;letter-spacing:.3px}
+header.site .sub{font-size:12.5px;opacity:.85;margin-top:2px}
+nav.site a{color:#fff;opacity:.9;font-size:14px;margin-left:16px}
+nav.site a.active{opacity:1;border-bottom:2px solid #fff;padding-bottom:2px}
+main{padding:26px 0 56px}
+.card{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:20px 22px;margin-bottom:18px;
+}
+.card h2{font-size:17px;margin:0 0 4px}
+.card h2+.hint{margin-top:0}
+.hint{color:var(--ink-2);font-size:13.5px;margin:0 0 16px}
+.grid{display:grid;gap:14px}
+.grid.g3{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.grid.g2{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.entry{
+  display:block;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:18px;transition:.15s border-color,.15s transform;
+}
+.entry:hover{border-color:var(--brand);transform:translateY(-2px);text-decoration:none}
+.entry .k{font-size:12px;color:var(--brand);font-weight:700;letter-spacing:.6px}
+.entry h3{margin:6px 0 6px;font-size:16px;color:var(--ink)}
+.entry p{margin:0;font-size:13.5px;color:var(--ink-2)}
+label{display:block;font-size:13.5px;color:var(--ink-2);margin-bottom:5px}
+input[type=number],select{
+  width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;
+  font:inherit;font-size:15px;background:#fff;color:var(--ink);
+}
+input[type=number]:focus,select:focus{outline:2px solid rgba(18,138,122,.28);border-color:var(--brand-2)}
+.field{margin-bottom:14px}
+.modebar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.modebar button{
+  font:inherit;font-size:14px;padding:8px 16px;border-radius:999px;cursor:pointer;
+  border:1px solid var(--line);background:#fff;color:var(--ink-2);
+}
+.modebar button[aria-pressed=true]{background:var(--brand);border-color:var(--brand);color:#fff;font-weight:600}
+.result{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
+.kpi{background:#f2f8f7;border:1px solid #d6e7e4;border-radius:10px;padding:14px 15px}
+.kpi .lab{font-size:12.5px;color:var(--ink-2)}
+.kpi .val{font-size:23px;font-weight:700;color:var(--brand);line-height:1.35;word-break:break-all}
+.kpi .unit{font-size:12.5px;color:var(--ink-2);margin-left:2px;font-weight:400}
+.kpi.alt{background:#fff8ec;border-color:#f0dcb6}
+.kpi.alt .val{color:#8a5a00}
+table.fx{width:100%;border-collapse:collapse;font-size:13.5px}
+table.fx th,table.fx td{border-bottom:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+table.fx th{color:var(--ink-2);font-weight:600;background:#fafbfc}
+.todo{color:var(--warn);background:var(--warn-bg);border:1px dashed #e7b3ae;border-radius:6px;
+  padding:1px 6px;font-size:12.5px;white-space:nowrap}
+.note{font-size:12.5px;color:var(--ink-2);border-left:3px solid var(--line);padding-left:10px;margin:12px 0 0}
+.chart{width:100%;height:330px}
+footer.site{border-top:1px solid var(--line);background:#fff;color:var(--ink-2);font-size:12.5px;padding:18px 0}
+footer.site .wrap{display:flex;flex-wrap:wrap;gap:8px 22px;justify-content:space-between}
+@media (max-width:600px){
+  .chart{height:260px}
+  header.site{padding:18px 0 16px}
+  .kpi{padding:11px 12px}
+  .kpi .val{font-size:18px}
+  .card{padding:16px 15px}
+  table.fx{font-size:12.5px}
+  table.fx th,table.fx td{padding:7px 5px}
+  nav.site a{margin-left:0;margin-right:14px}
+}
